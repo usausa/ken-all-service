@@ -29,3 +29,5 @@ global using Microsoft.Extensions.Logging;
 global using Smart;
 global using Smart.Collections.Generic;
 global using Smart.Text;
+
+global using KenAllService.Models.Entity;

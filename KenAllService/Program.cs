@@ -2,6 +2,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
+using KenAllService.Accessors;
+
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Hosting.WindowsServices;
 
 using Prometheus;
@@ -10,6 +13,8 @@ using Serilog;
 
 using Smart.AspNetCore;
 using Smart.AspNetCore.ApplicationModels;
+using Smart.Data;
+using Smart.Data.Accessor.Extensions.DependencyInjection;
 
 #pragma warning disable CA1812
 
@@ -76,12 +81,29 @@ builder.Services.AddHealthChecks();
 // Swagger
 builder.Services.AddSwaggerGen();
 
-// TODO Data
+// Data
+var connectionStringBuilder = new SqliteConnectionStringBuilder
+{
+    DataSource = "KenAll.db",
+    Pooling = true,
+    Cache = SqliteCacheMode.Shared
+};
+var connectionString = connectionStringBuilder.ConnectionString;
+
+builder.Services.AddSingleton<IDbProvider>(new DelegateDbProvider(() => new SqliteConnection(connectionString)));
+builder.Services.AddDataAccessor();
 
 //--------------------------------------------------------------------------------
 // Configure the HTTP request pipeline
 //--------------------------------------------------------------------------------
 var app = builder.Build();
+
+// Prepare
+if (!File.Exists(connectionStringBuilder.DataSource))
+{
+    var accessor = app.Services.GetRequiredService<IAddressAccessor>();
+    accessor.Create();
+}
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
