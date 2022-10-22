@@ -16,7 +16,7 @@ public class AddressService
 {
     private readonly SemaphoreSlim sync = new(1, 1);
 
-    private ILogger<AddressService> log;
+    private readonly ILogger<AddressService> log;
 
     private readonly IDbProvider dbProvider;
 
