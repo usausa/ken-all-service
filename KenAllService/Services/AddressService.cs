@@ -16,16 +16,20 @@ public class AddressService
 {
     private readonly SemaphoreSlim sync = new(1, 1);
 
-    private IDbProvider DbProvider { get; }
+    private ILogger<AddressService> log;
 
-    private IAddressAccessor AddressAccessor { get; }
+    private readonly IDbProvider dbProvider;
+
+    private readonly IAddressAccessor addressAccessor;
 
     public AddressService(
+        ILogger<AddressService> log,
         IDbProvider dbProvider,
         IAccessorResolver<IAddressAccessor> addressAccessor)
     {
-        DbProvider = dbProvider;
-        AddressAccessor = addressAccessor.Accessor;
+        this.log = log;
+        this.dbProvider = dbProvider;
+        this.addressAccessor = addressAccessor.Accessor;
     }
 
     public async ValueTask<List<AddressEntity>> QueryAsync(string zipCode)
@@ -33,7 +37,7 @@ public class AddressService
         await sync.WaitAsync();
         try
         {
-            return await AddressAccessor.QueryAsync(zipCode);
+            return await addressAccessor.QueryAsync(zipCode);
         }
         finally
         {
@@ -47,12 +51,15 @@ public class AddressService
         await stream.CopyToAsync(ms);
         using var archive = new ZipArchive(ms);
 
+        var success = 0;
+        var failed = 0;
+
         await sync.WaitAsync();
         try
         {
-            await AddressAccessor.TruncateAsync();
+            await addressAccessor.TruncateAsync();
 
-            await using var con = DbProvider.CreateConnection();
+            await using var con = dbProvider.CreateConnection();
             await con.OpenAsync();
             await using var tx = await con.BeginTransactionAsync();
 
@@ -70,20 +77,24 @@ public class AddressService
                     var record = csv.GetRecord<AddressEntity>();
                     if (record is null)
                     {
+                        failed++;
                         continue;
                     }
 
-                    await AddressAccessor.InsertAsync(tx, record);
+                    await addressAccessor.InsertAsync(tx, record);
+                    success++;
                 }
             }
 
             await tx.CommitAsync();
 
-            await AddressAccessor.VacuumAsync();
+            await addressAccessor.VacuumAsync();
         }
         finally
         {
             sync.Release();
         }
+
+        log.LogInformation("Import completed. success=[{Success}], failed=[{Failed}]", success, failed);
     }
 }
