@@ -27,6 +27,7 @@ public class ZipController : BaseApiController
 
     [HttpPost]
     [ReadableBodyStream]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async ValueTask<IActionResult> Update()
     {
         if (Request.ContentLength == 0)
