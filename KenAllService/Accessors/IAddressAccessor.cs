@@ -9,9 +9,15 @@ public interface IAddressAccessor
     [Execute]
     void Create();
 
+    [Execute]
+    ValueTask TruncateAsync();
+
+    [Execute]
+    ValueTask VacuumAsync();
+
     [Insert]
-    void Insert(DbTransaction tx, AddressEntity entity);
+    ValueTask InsertAsync(DbTransaction tx, AddressEntity entity);
 
     [Query]
-    ValueTask<List<AddressEntity>> Query(string zipCode);
+    ValueTask<List<AddressEntity>> QueryAsync(string zipCode);
 }

@@ -15,4 +15,4 @@ CREATE TABLE Address (
     UpdateStatus int,
     UpdateReason int);
 
-CREATE INDEX IX_Address ON Record (ZipCode);
+CREATE INDEX IX_Address ON Address (ZipCode);

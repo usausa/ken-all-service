@@ -26,14 +26,4 @@
     <Content Update="appsettings.*.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="KenAll.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <SqlFiles Remove="Accessors\Sql\IAddressAccessor.Create.sql" />
-  </ItemGroup>
-
 </Project>

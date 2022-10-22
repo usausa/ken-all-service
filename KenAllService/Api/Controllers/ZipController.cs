@@ -1,19 +1,19 @@
 namespace KenAllService.Api.Controllers;
 
-using KenAllService.Accessors;
 using KenAllService.Models.Api;
+using KenAllService.Services;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Smart.Data.Accessor;
+using Smart.AspNetCore.Filters;
 
 public class ZipController : BaseApiController
 {
-    private IAddressAccessor AddressAccessor { get; }
+    private AddressService AddressService { get; }
 
-    public ZipController(IAccessorResolver<IAddressAccessor> addressAccessor)
+    public ZipController(AddressService addressService)
     {
-        AddressAccessor = addressAccessor.Accessor;
+        AddressService = addressService;
     }
 
     [HttpGet]
@@ -21,9 +21,21 @@ public class ZipController : BaseApiController
     {
         return Ok(new ZipSearchResponse
         {
-            Results = (await AddressAccessor.Query(zipCode)).ToArray()
+            Results = (await AddressService.QueryAsync(zipCode)).ToArray()
         });
     }
 
-    // TODO Import
+    [HttpPost]
+    [ReadableBodyStream]
+    public async ValueTask<IActionResult> Update()
+    {
+        if (Request.ContentLength == 0)
+        {
+            return BadRequest();
+        }
+
+        await AddressService.ImportAsync(Request.Body);
+
+        return Ok();
+    }
 }

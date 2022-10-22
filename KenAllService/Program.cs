@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
 using KenAllService.Accessors;
+using KenAllService.Services;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Hosting.WindowsServices;
@@ -14,9 +15,12 @@ using Serilog;
 using Smart.AspNetCore;
 using Smart.AspNetCore.ApplicationModels;
 using Smart.Data;
+using Smart.Data.Accessor;
 using Smart.Data.Accessor.Extensions.DependencyInjection;
 
 #pragma warning disable CA1812
+
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 //--------------------------------------------------------------------------------
 // Configure builder
@@ -93,6 +97,8 @@ var connectionString = connectionStringBuilder.ConnectionString;
 builder.Services.AddSingleton<IDbProvider>(new DelegateDbProvider(() => new SqliteConnection(connectionString)));
 builder.Services.AddDataAccessor();
 
+builder.Services.AddSingleton<AddressService>();
+
 //--------------------------------------------------------------------------------
 // Configure the HTTP request pipeline
 //--------------------------------------------------------------------------------
@@ -101,7 +107,7 @@ var app = builder.Build();
 // Prepare
 if (!File.Exists(connectionStringBuilder.DataSource))
 {
-    var accessor = app.Services.GetRequiredService<IAddressAccessor>();
+    var accessor = app.Services.GetRequiredService<IAccessorResolver<IAddressAccessor>>().Accessor;
     accessor.Create();
 }
 
