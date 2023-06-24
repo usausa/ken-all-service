@@ -12,7 +12,7 @@ using KenAllService.Application.Csv;
 using Smart.Data;
 using Smart.Data.Accessor;
 
-public class AddressService
+public sealed class AddressService : IDisposable
 {
     private readonly SemaphoreSlim sync = new(1, 1);
 
@@ -30,6 +30,11 @@ public class AddressService
         this.log = log;
         this.dbProvider = dbProvider;
         this.addressAccessor = addressAccessor.Accessor;
+    }
+
+    public void Dispose()
+    {
+        sync.Dispose();
     }
 
     public async ValueTask<List<AddressEntity>> QueryAsync(string zipCode)
