@@ -48,27 +48,27 @@ builder.Host
     });
 
 // Route
-builder.Services.Configure<RouteOptions>(options =>
+builder.Services.Configure<RouteOptions>(static options =>
 {
     options.AppendTrailingSlash = true;
 });
 
 // Filter
 builder.Services.AddExceptionLogging();
-builder.Services.AddTimeLogging(options =>
+builder.Services.AddTimeLogging(static options =>
 {
     options.Threshold = 5000;
 });
 
 // Add services to the container.
 builder.Services
-    .AddControllers(options =>
+    .AddControllers(static options =>
     {
         options.Filters.AddExceptionLogging();
         options.Filters.AddTimeLogging();
         options.Conventions.Add(new LowercaseControllerModelConvention());
     })
-    .AddJsonOptions(options =>
+    .AddJsonOptions(static options =>
     {
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
