@@ -124,7 +124,7 @@ app.UseHttpMetrics();
 app.MapMetrics();
 
 app.MapControllers();
-app.MapGet("/", async context => await context.Response.WriteAsync("KEN All API Service"));
+app.MapGet("/", context => context.Response.WriteAsync("KEN All API Service"));
 
 // Run
 app.Run();
