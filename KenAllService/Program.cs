@@ -41,11 +41,10 @@ builder.Host
 
 // Log
 builder.Logging.ClearProviders();
-builder.Host
-    .UseSerilog((hostingContext, loggerConfiguration) =>
-    {
-        loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
-    });
+builder.Services.AddSerilog(option =>
+{
+    option.ReadFrom.Configuration(builder.Configuration);
+});
 
 // Route
 builder.Services.Configure<RouteOptions>(static options =>
