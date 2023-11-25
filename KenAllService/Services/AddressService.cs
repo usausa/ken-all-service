@@ -68,7 +68,7 @@ public sealed class AddressService : IDisposable
             await con.OpenAsync();
             await using var tx = await con.BeginTransactionAsync();
 
-            foreach (var entry in archive.Entries.Where(x => x.FullName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)))
+            foreach (var entry in archive.Entries.Where(static x => x.FullName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)))
             {
                 using var reader = new StreamReader(entry.Open(), Encoding.GetEncoding("Shift_JIS"));
                 using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.CurrentCulture)
@@ -100,6 +100,6 @@ public sealed class AddressService : IDisposable
             sync.Release();
         }
 
-        log.LogInformation("Import completed. success=[{Success}], failed=[{Failed}]", success, failed);
+        log.InfoImportCompleted(success, failed);
     }
 }
