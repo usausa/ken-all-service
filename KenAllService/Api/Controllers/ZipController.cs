@@ -21,7 +21,7 @@ public class ZipController : BaseApiController
     {
         return Ok(new ZipSearchResponse
         {
-            Results = (await AddressService.QueryAsync(zipCode)).ToArray()
+            Results = [.. await AddressService.QueryAsync(zipCode)]
         });
     }
 

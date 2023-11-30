@@ -7,10 +7,16 @@
     <Deterministic>true</Deterministic>
     <MSBuildWarningsAsMessages>SA0001</MSBuildWarningsAsMessages>
     <WarningsAsErrors>nullable</WarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <AnalysisMode>All</AnalysisMode>
+    <AnalysisLevel>preview</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>
