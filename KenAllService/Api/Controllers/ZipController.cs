@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Smart.AspNetCore.Filters;
 
-public class ZipController : BaseApiController
+public sealed class ZipController : BaseApiController
 {
     private AddressService AddressService { get; }
 

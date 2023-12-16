@@ -1,7 +1,7 @@
 namespace KenAllService.Models.Api;
 
 #pragma warning disable CA1819
-public class ZipSearchResponse
+public sealed class ZipSearchResponse
 {
     public AddressEntity[] Results { get; set; } = default!;
 }

@@ -1,6 +1,6 @@
 namespace KenAllService.Models.Entity;
 
-public class AddressEntity
+public sealed class AddressEntity
 {
     public string JisX0402 { get; set; } = default!;
 
