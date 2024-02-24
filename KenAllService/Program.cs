@@ -53,7 +53,6 @@ builder.Services.Configure<RouteOptions>(static options =>
 });
 
 // Filter
-builder.Services.AddExceptionLogging();
 builder.Services.AddTimeLogging(static options =>
 {
     options.Threshold = 5000;
@@ -63,9 +62,8 @@ builder.Services.AddTimeLogging(static options =>
 builder.Services
     .AddControllers(static options =>
     {
-        options.Filters.AddExceptionLogging();
+        options.Conventions.Add(new KebabControllerModelConvention());
         options.Filters.AddTimeLogging();
-        options.Conventions.Add(new LowercaseControllerModelConvention());
     })
     .AddJsonOptions(static options =>
     {
@@ -106,6 +104,9 @@ if (!File.Exists(connectionStringBuilder.DataSource))
     var accessor = app.Services.GetRequiredService<IAccessorResolver<IAddressAccessor>>().Accessor;
     accessor.Create();
 }
+
+// Error handler
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
